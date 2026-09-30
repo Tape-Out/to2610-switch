@@ -1,0 +1,66 @@
+name: to2610-switch
+version: 0.1.0
+spec: '0.1'
+identity:
+  slug: to2610-switch
+  display_name: Eight-port Ethernet switch chip
+  category: soc
+  maturity: simulated
+  summary: 'A coreless eight-port 10/100 Ethernet switch for the ECOS 2610 shuttle: eight
+    RMII PHYs, forwarding from reset, managed over SPI when a host is there.'
+bus: none
+instances:
+- name: sw0
+  of: eswitch
+  with:
+    ports: 8
+    macEntries: 32
+    vlan: true
+  addr: 0x10000000
+- name: gpio0
+  of: gpio
+  with:
+    numPins: 6
+    irq: false
+  addr: 0x10001000
+- name: mgmt
+  of: spis
+deps:
+  hwcore: ^0.1
+  amba: ^0.1
+asic:
+  top: to2610_switch
+  frame: mpc
+  mhz: 50
+  flow: syn_sta
+  # 每口先发后收：txd[1:0]、tx_en，再 rxd[1:0]、crs_dv、rx_er，七位一组，0 号口从第 0 位起
+  pads:
+  - sw0_pins_tx_0_*
+  - sw0_pins_rx_0_*
+  - sw0_pins_tx_1_*
+  - sw0_pins_rx_1_*
+  - sw0_pins_tx_2_*
+  - sw0_pins_rx_2_*
+  - sw0_pins_tx_3_*
+  - sw0_pins_rx_3_*
+  - sw0_pins_tx_4_*
+  - sw0_pins_rx_4_*
+  - sw0_pins_tx_5_*
+  - sw0_pins_rx_5_*
+  - sw0_pins_tx_6_*
+  - sw0_pins_rx_6_*
+  - sw0_pins_tx_7_*
+  - sw0_pins_rx_7_*
+  - mgmt_pins_sck
+  - mgmt_pins_cs_n
+  - mgmt_pins_mosi
+  - { out: mgmt_pins_miso, oe: mgmt_pins_miso_oe }
+  - { in: gpio0_pins_gpio_in, out: gpio0_pins_gpio_out, oe: gpio0_pins_gpio_dir }
+  unused: [irqs]
+tasks:
+  chip:
+    desc: 出流片的 .v，再在它上面跑整片测试
+    run: bash htest/chip.sh {{out}}
+test:
+  upstream:
+  - { name: chip, task: chip, timeout: 3600 }

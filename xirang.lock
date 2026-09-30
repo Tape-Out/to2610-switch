@@ -1,0 +1,45 @@
+xirang-lock: 1
+top: to2610-switch
+packages:
+- name: amba
+  version: 0.1.0
+  kind: library
+  source:
+    path: amba
+  digest: sha256:3c48e30b35e54aa175ef2a92e39d0d1e
+- name: emac
+  version: 0.1.0
+  kind: ip
+  source:
+    path: emac
+  digest: sha256:a55ed3747c8c8ff7e64e91cd8b1dde7e
+- name: eswitch
+  version: 0.1.0
+  kind: ip
+  source:
+    path: eswitch
+  digest: sha256:53f285958d418c790607f0e736b3c12d
+- name: gpio
+  version: 0.1.0
+  kind: ip
+  source:
+    path: gpio
+  digest: sha256:26868e7e9d9c51a1a1020d80aea8c6c7
+- name: hwcore
+  version: 0.1.0
+  kind: library
+  source:
+    path: hwcore
+  digest: sha256:6d458b35d1377f1ebd0f54d9fb8391d0
+- name: spis
+  version: 0.1.0
+  kind: ip
+  source:
+    path: spis
+  digest: sha256:e5f06eee951fe11f1019603c67cb7088
+- name: to2610-switch
+  version: 0.1.0
+  kind: ip
+  source:
+    path: to2610-switch
+  digest: sha256:6a90571dd903bf94eb8710740e0d8413
