@@ -6,13 +6,13 @@ packages:
   kind: library
   source:
     path: amba
-  digest: sha256:3c48e30b35e54aa175ef2a92e39d0d1e
+  digest: sha256:580eb25b187d414bd3343818e5cec023
 - name: emac
   version: 0.1.0
   kind: ip
   source:
     path: emac
-  digest: sha256:a55ed3747c8c8ff7e64e91cd8b1dde7e
+  digest: sha256:7a786ecdb104b729e1df09939316acf6
 - name: eswitch
   version: 0.1.0
   kind: ip
@@ -42,4 +42,4 @@ packages:
   kind: ip
   source:
     path: to2610-switch
-  digest: sha256:6a90571dd903bf94eb8710740e0d8413
+  digest: sha256:614c4acc6ba20b70a0595e5210e3dab2

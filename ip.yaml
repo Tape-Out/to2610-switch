@@ -6,7 +6,7 @@ identity:
   display_name: Eight-port Ethernet switch chip
   category: soc
   maturity: simulated
-  summary: 'A coreless eight-port 10/100 Ethernet switch for the ECOS 2610 shuttle: eight
+  summary: 'A coreless eight-port 100 Mbps Ethernet switch for the ECOS 2610 shuttle: eight
     RMII PHYs, forwarding from reset, managed over SPI when a host is there.'
 bus: none
 instances:

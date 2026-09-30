@@ -176,6 +176,33 @@ async def port_disable(dut):
 
 
 @cocotb.test()
+async def long_frame(dut):
+    """最长的标准帧（1514 字节加 FCS）直通转出，逐字节相同。"""
+    b, phys, spi, hs, _ = await up(dut)
+    f = B.eth(B.BCAST, B.mac_of(2), 0x88B5, bytes(k & 0xFF for k in range(1500)))
+    phys[2].send(f)
+    await idle(b, phys)
+    for i in range(S.PORTS):
+        assert hs[i].seen == ([] if i == 2 else [f]), (i, [len(x) for x in hs[i].seen])
+    clean(phys, hs)
+
+
+@cocotb.test()
+async def same_port(dut):
+    """两台设备经集线器接在同一个口上：它们之间的单播不转出去（802.1D 7.7）。"""
+    b, phys, spi, hs, _ = await up(dut)
+    x = bytes([0x02, 0, 0, 0, 0, 0x99])
+    phys[3].send(B.eth(B.BCAST, x, 0x88B5, b"hello" * 10))
+    await idle(b, phys)
+    for h in hs:
+        h.seen.clear()
+    phys[3].send(B.eth(x, B.mac_of(3), 0x88B5, b"local" * 10))
+    await idle(b, phys)
+    assert all(h.seen == [] for h in hs), [len(h.seen) for h in hs]
+    clean(phys, hs)
+
+
+@cocotb.test()
 async def counters(dut):
     b, phys, spi, hs, _ = await up(dut)
     for k in range(3):
