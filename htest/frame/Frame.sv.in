@@ -198,11 +198,15 @@ module @FRAME_TOP@;
     if (!dut.selection_valid || !dut.design_selected[DESIGN_ID])
       $fatal(1, "the design was not selected through FrameTop");
 
-    // 每口三根发送脚有人驱动；MISO 要等 CS_N 拉低，GPIO 复位后是输入，这时都是高阻
-    for (int p = 0; p < 8; p++) begin
-      if ((^user_io[DESIGN_ID_WIDTH + 7*p +: 3]) === 1'bz)
-        $fatal(1, "the transmit pads of port %0d are not driven after reset", p);
-    end
+    // 每口三根发送脚有人驱动；MISO 要等 CS_N 拉低，GPIO 复位后是输入，这时都是高阻。
+    // 逐口写开：Verilator 只认下标是常数的高阻比较
+`define TX_DRIVEN(p) \
+    if (user_io[DESIGN_ID_WIDTH + 7*(p)] === 1'bz || user_io[DESIGN_ID_WIDTH + 7*(p) + 1] === 1'bz || \
+        user_io[DESIGN_ID_WIDTH + 7*(p) + 2] === 1'bz) \
+      $fatal(1, "the transmit pads of port %0d are not driven after reset", p);
+    `TX_DRIVEN(0) `TX_DRIVEN(1) `TX_DRIVEN(2) `TX_DRIVEN(3)
+    `TX_DRIVEN(4) `TX_DRIVEN(5) `TX_DRIVEN(6) `TX_DRIVEN(7)
+`undef TX_DRIVEN
     if (user_io[MISO] !== 1'bz || user_io[GPIO2 +: 2] !== 2'bzz)
       $fatal(1, "MISO or GPIO is driven after reset");
 
