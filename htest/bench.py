@@ -47,6 +47,7 @@ class Bench:
         self.ports: list["Phy"] = []
         self.watch = []                 # 每个上升沿回调 f(io_out, io_oe)
         self.cycle = 0
+        self.live = False
         dut.io_in.value = 0
 
     def set(self, b: int, v: int) -> None:
@@ -73,6 +74,15 @@ class Bench:
     async def cycles(self, n: int):
         for _ in range(n):
             await RisingEdge(self.dut.clock)
+
+    async def release(self):
+        """按住复位时引脚全部高阻（在板写 Flash、夹管理线靠的就是它）；放开之后发送脚才要一直驱动。"""
+        await self.cycles(20)
+        for oe in (self.dut.io_oe,):
+            assert set(oe.value.binstr) == {"0"}, "复位期间引脚要全部高阻"
+        self.dut.reset.value = 0
+        await self.cycles(2)
+        self.live = True
 
 
 class Phy:
@@ -112,7 +122,8 @@ class Phy:
 
     def sample(self, o: int, e: int):
         if not all((e >> b) & 1 for b in (*self.txd, self.en)):
-            self.bad_oe = True
+            self.bad_oe |= self.b.live
+            return
         if (o >> self.en) & 1:
             if self.cur is None:
                 self.cur = []

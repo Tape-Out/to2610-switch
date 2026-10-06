@@ -33,6 +33,8 @@ asic:
   frame: mpc
   mhz: 50
   flow: syn_sta
+  # 默认的 0.4 下详细布线五小时走不完；放宽给走线腾地方
+  util: 0.25
   # 每口先发后收：txd[1:0]、tx_en，再 rxd[1:0]、crs_dv、rx_er，七位一组，0 号口从第 0 位起
   pads:
   - sw0_pins_tx_0_*

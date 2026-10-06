@@ -24,9 +24,8 @@ async def up(dut):
     spi = B.Spi(b)
     mdio = B.MdioPhy(b)
     cocotb.start_soon(b.run())
-    await b.cycles(20)
-    dut.reset.value = 0
-    await b.cycles(10)
+    await b.release()
+    await b.cycles(8)
     hs = [B.Host(b, phys[i], i) for i in range(S.PORTS)]
     cocotb.start_soon(B.serve(hs, b))
     return b, phys, spi, hs, mdio
