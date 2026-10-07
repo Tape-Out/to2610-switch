@@ -14,7 +14,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import spis  # noqa: E402
 
 SW, GPIO = 0x1000_0000, 0x1000_1000
-PORTS, ENTRIES = 8, 32            # 照本仓 ip.yaml 的 ports 与 macEntries
+PORTS, ENTRIES = 8, 16            # 照本仓 ip.yaml 的 ports 与 macEntries
 
 CTRL, PORTEN, AGETIME, TICK = 0x00, 0x04, 0x10, 0x14
 MACLO = 0x100                       # 每条 8 字节：低 32 位，再是 {有效, 口号, 高 16 位}
