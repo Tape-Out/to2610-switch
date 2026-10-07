@@ -136,6 +136,34 @@ async def ageing(dut):
 
 
 @cocotb.test()
+async def table_full(dut):
+    """表满之后再学：表项不超过 ENTRIES 条，新地址轮换顶掉最早的；发往被顶掉的地址泛洪，发往最新的只走它的口。"""
+    b, phys, spi, hs, _ = await up(dut)
+    macs = [bytes([0x02, 0x26, 0x10, 0x00, 0x00, k]) for k in range(S.ENTRIES + 4)]
+    for m in macs:
+        phys[2].send(B.eth(B.BCAST, m, 0x88B5, b"fill" * 12))
+        await idle(b, phys, 50)
+    tab = await spi.do(S.table())
+    learned = {m for _, m, _ in tab}
+    assert len(tab) <= S.ENTRIES, len(tab)
+    as_int = [int.from_bytes(m, "big") for m in macs]
+    assert as_int[-1] in learned
+    assert [m in learned for m in as_int[:4]] == [False] * 4, [hex(m) for m in learned]
+    assert all(m in learned for m in as_int[4:]), [hex(m) for m in learned]
+    for h in hs:
+        h.seen.clear()
+    phys[0].send(B.eth(macs[-1], B.mac_of(0), 0x88B5, b"to the newest" * 4))
+    await idle(b, phys)
+    assert [len(h.seen) for h in hs] == [0, 0, 1, 0, 0, 0, 0, 0], [len(h.seen) for h in hs]
+    for h in hs:
+        h.seen.clear()
+    phys[0].send(B.eth(macs[0], B.mac_of(0), 0x88B5, b"to the evicted" * 4))
+    await idle(b, phys)
+    assert all(len(hs[i].seen) == 1 for i in range(1, S.PORTS)), [len(h.seen) for h in hs]
+    clean(phys, hs)
+
+
+@cocotb.test()
 async def contention(dut):
     """两个口同一拍发往同一个口：一帧完整送到，另一帧整帧丢掉并记数，不交错成坏帧。"""
     b, phys, spi, hs, _ = await up(dut)
