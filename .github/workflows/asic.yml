@@ -5,9 +5,17 @@ on:
       flow:
         description: ecc 预设：syn_sta 或 rtl2gds
         default: rtl2gds
+      from-run:
+        description: 后端已在别处跑完：给那一次的 run id（asic.yml 或 .github 的 resume.yml），这里只跑门级冒烟
+        default: ""
+      from-where:
+        description: from-run 那一次在哪个仓里跑的
+        default: .github
 jobs:
   asic:
     uses: Tape-Out/.github/.github/workflows/asic.yml@main
     with:
       flow: ${{ inputs.flow }}
+      from-run: ${{ inputs.from-run }}
+      from-where: ${{ inputs.from-where }}
       apt: yosys
