@@ -6,7 +6,7 @@ An eight-port 100 Mbps Ethernet switch chip for the ECOS 2610 shuttle. It has no
 
 Assembled by [`xirang`](https://github.com/Tape-Out/xirang) from [`eswitch`](https://github.com/Tape-Out/eswitch) (eight ports, 16 learned addresses, port isolation), [`spis`](https://github.com/Tape-Out/spis) (SPI slave that masters the on-chip bus) and [`gpio`](https://github.com/Tape-Out/gpio) (six pins). There is no RTL of its own.
 
-The board wiring (eight RMII PHYs with RJ45 jacks, the SPI management header, MDIO over GPIO), the chip tests and the limits are in [`docs/流片说明.md`](docs/流片说明.md); the tape-out report is generated from that file.
+The board wiring (eight RMII PHYs with 8P8C jacks, the SPI management header, MDIO over GPIO), the chip tests and the limits are in [`docs/流片说明.md`](docs/流片说明.md); the tape-out report is generated from that file.
 
 ## Management
 
